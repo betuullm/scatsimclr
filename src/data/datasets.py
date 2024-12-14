@@ -1,11 +1,11 @@
 """This file contains dataset stats information"""
 
 from torchvision import datasets
-
 from torch.utils.data import Dataset
 from .cifar_20 import CIFAR20
+from .open_animal_tracks import OpenAnimalTracks
 
-SUPPORTED_DATASETS = ['stl10', 'cifar10', 'cifar20']
+SUPPORTED_DATASETS = ['stl10', 'cifar10', 'cifar20','openanimaltracks']
 
 IMAGENET_STATS = {
     'mean': [0.485, 0.456, 0.406],
@@ -16,17 +16,23 @@ CIFAR_STATS = {
     'mean': [0.491, 0.482, 0.447],
     'std': [0.247, 0.243, 0.261]
 }
+OPENANIMALTRACKS_STATS = {
+   'mean': [0.4941, 0.4723, 0.4415],
+    'std':[0.1487, 0.1383, 0.1421]
+}
 
 DATASET_STATS = {
     'cifar10': CIFAR_STATS,
     'cifar20': CIFAR_STATS,
-    'stl10': IMAGENET_STATS
+    'stl10': IMAGENET_STATS,
+    'openanimaltracks': OPENANIMALTRACKS_STATS
 }
 
 NUM_CLASSES = {
     'cifar10': 10,
     'cifar20': 20,
-    'stl10': 10
+    'stl10': 10,
+    'openanimaltracks': 18
 }
 
 
@@ -66,6 +72,14 @@ def get_dataset(dataset: str, train: bool,
             split = 'test'
 
         return datasets.STL10('./data', split=split, download=download, transform=transform)
+    
+    elif dataset == 'openanimaltracks':
+        return OpenAnimalTracks(
+            root='./data/open_animal_tracks',  # veya drive yolu
+            train=train,
+            transform=transform
+        )
+    
     elif dataset == 'cifar10':
         return datasets.CIFAR10('./data', train=train, download=download, transform=transform)
     elif dataset == 'cifar20':
