@@ -11,20 +11,20 @@ class OpenAnimalTracks(Dataset):
     Bu sınıf, belirtilen dizindeki hayvan görüntülerini yükler.
     """
     
-    def __init__(self, root, train=True, transform=None):
+    def __init__(self, config, train=True, transform=None):
         """
         Parametreler:
-            root (str): Veri setinin kök dizini
+            config (dict): Config dosyası
             train (bool): True ise eğitim seti, False ise test seti yüklenir
             transform: Görüntülere uygulanacak dönüşümler
         """
         self.transform = transform
-        self.root = root
+        self.root = config['dataset']['data_root']
         self.train = train
         
         # Train veya test klasörüne göre yolu belirle
-        data_folder = 'train' if train else 'test'
-        self.data_path = os.path.join(root, data_folder)
+        data_folder = config['dataset']['train_dir'] if train else config['dataset']['test_dir']
+        self.data_path = os.path.join(self.root, data_folder)
         
         # Görüntüleri listele
         self.image_files = glob(os.path.join(self.data_path, '*.jpg'))
