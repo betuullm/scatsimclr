@@ -16,6 +16,7 @@ CIFAR_STATS = {
     'mean': [0.491, 0.482, 0.447],
     'std': [0.247, 0.243, 0.261]
 }
+
 OPENANIMALTRACKS_STATS = {
    'mean': [0.4941, 0.4723, 0.4415],
     'std':[0.1487, 0.1383, 0.1421]
@@ -75,9 +76,7 @@ def get_dataset(dataset: str, train: bool,
     
     elif dataset == 'openanimaltracks':
         return OpenAnimalTracks(
-            root='./data/open_animal_tracks',  # veya drive yolu
-            train=train,
-            transform=transform
+            root='./data/open_animal_tracks', train=train,transform=transform, download=download
         )
     
     elif dataset == 'cifar10':

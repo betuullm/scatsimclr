@@ -1,30 +1,25 @@
-# src/data/open_animal_tracks.py
-
 from torch.utils.data import Dataset
 from PIL import Image
 import os
 from glob import glob
 
 class OpenAnimalTracks(Dataset):
-    """
-    OpenAnimalTracks veri setini yüklemek için özel Dataset sınıfı.
-    Bu sınıf, belirtilen dizindeki hayvan görüntülerini yükler.
-    """
-    
-    def __init__(self, config, train=True, transform=None):
-        """
-        Parametreler:
-            config (dict): Config dosyası
-            train (bool): True ise eğitim seti, False ise test seti yüklenir
-            transform: Görüntülere uygulanacak dönüşümler
-        """
+
+    def __init__(self, root='./data/open_animal_tracks', train=True, transform=None, download=False):
+
         self.transform = transform
-        self.root = config['dataset']['data_root']
+        self.root = root
         self.train = train
         
         # Train veya test klasörüne göre yolu belirle
-        data_folder = config['dataset']['train_dir'] if train else config['dataset']['test_dir']
-        self.data_path = os.path.join(self.root, data_folder)
+        data_folder = 'train' if train else 'test'
+        
+        # Google Drive'dan veri seti yolu
+        self.data_path = os.path.join('/content/drive/MyDrive/Colab Notebooks/OpenAnimalTracks/OpenAnimalTracks', data_folder)
+        
+        # Dizinin var olup olmadığını kontrol et
+        if not os.path.exists(self.data_path):
+            raise RuntimeError(f'Dizin bulunamadı: {self.data_path}. Lütfen veri setinin doğru konumda olduğundan emin olun.')
         
         # Görüntüleri listele
         self.image_files = glob(os.path.join(self.data_path, '*.jpg'))
@@ -33,19 +28,9 @@ class OpenAnimalTracks(Dataset):
             raise RuntimeError(f'Görüntü bulunamadı: {self.data_path}')
     
     def __len__(self):
-        """Veri setindeki toplam görüntü sayısını döndürür"""
         return len(self.image_files)
     
     def __getitem__(self, idx):
-        """
-        Belirtilen indeksteki görüntüyü yükler ve döndürür
-        
-        Parametreler:
-            idx (int): Görüntü indeksi
-            
-        Dönüş:
-            tuple: (görüntü, etiket) çifti. Etiket her zaman -1'dir (denetimsiz öğrenme için)
-        """
         img_path = self.image_files[idx]
         image = Image.open(img_path).convert('RGB')
         
