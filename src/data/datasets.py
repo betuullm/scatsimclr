@@ -75,8 +75,7 @@ def get_dataset(dataset: str, train: bool,
         return datasets.STL10('./data', split=split, download=download, transform=transform)
     
     elif dataset == 'openanimaltracks':
-        return OpenAnimalTracks(
-            root='./data/open_animal_tracks', train=train,transform=transform, download=download
+        return OpenAnimalTracks('./data/open_animal_tracks', train=train,transform=transform, download=download
         )
     
     elif dataset == 'cifar10':

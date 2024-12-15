@@ -1,6 +1,7 @@
 from typing import NoReturn, Tuple, Dict
 from pathlib import Path
 import shutil
+import os
 
 import numpy as np
 
@@ -106,6 +107,7 @@ class PretextTaskTrainer(BaseTrainer):
 
         # create checkpoint and save
         checkpoint_folder = Path(self._writer.log_dir) / 'checkpoints'
+        os.makedirs(checkpoint_folder, exist_ok=True)  # Dizin yoksa oluştur
 
         n_iter = 0
         valid_n_iter = 0
@@ -140,10 +142,10 @@ class PretextTaskTrainer(BaseTrainer):
                 # save the best model
                 if best_valid_loss > loss_contrastive_valid:
                     best_valid_loss = loss_contrastive_valid
-                    torch.save(model.state_dict(), checkpoint_folder / f'model_{epoch_counter}.pth')
+                    torch.save(model.state_dict(), os.path.join(checkpoint_folder, f'model_{epoch_counter}.pth'))
                     torch.save({"fc1": self._fc1.state_dict(), "fc2": self._fc2.state_dict(),
                                 "classification_fc": self._classification_fc.state_dict()},
-                               checkpoint_folder / f'model_{self._name_postfix}.pth')
+                               os.path.join(checkpoint_folder, f'model_{self._name_postfix}.pth'))
 
             # classification
             if epoch_counter % self._config['eval_every_n_epochs'] == 0:
@@ -151,7 +153,7 @@ class PretextTaskTrainer(BaseTrainer):
 
                 if acc > best_acc:
                     best_acc = acc
-                    torch.save(model.state_dict(), checkpoint_folder / f'model_best_{epoch_counter}.pth')
+                    torch.save(model.state_dict(), os.path.join(checkpoint_folder, f'model_best_{epoch_counter}.pth'))
 
                 self._writer.add_scalar('test/classification_accuracy', acc, test_n_iter)
                 test_n_iter += 1
@@ -161,13 +163,13 @@ class PretextTaskTrainer(BaseTrainer):
             if epoch_counter >= 10:
                 scheduler.step()
             self._writer.add_scalar('cosine_lr_decay', scheduler.get_lr()[0], global_step=n_iter)
-            torch.save(model.state_dict(), checkpoint_folder / f'model_{epoch_counter}.pth')
+            torch.save(model.state_dict(), os.path.join(checkpoint_folder, f'model_{epoch_counter}.pth'))
 
         # save final model
-        torch.save(model.state_dict(), checkpoint_folder / 'model_final.pth')
+        torch.save(model.state_dict(), os.path.join(checkpoint_folder, 'model_final.pth'))
         torch.save({"fc1": self._fc1.state_dict(), "fc2": self._fc2.state_dict(),
                     "classification_fc": self._classification_fc.state_dict()},
-                   checkpoint_folder / f'model_{self._name_postfix}_final.pth')
+                   os.path.join(checkpoint_folder, f'model_{self._name_postfix}_final.pth'))
 
     def _validate(self, model: nn.Module,
                   valid_loader: DataLoader) -> Tuple[float, float, float]:
