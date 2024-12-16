@@ -21,7 +21,7 @@ class SimCLRDataTransform:
         xj = self.transform(sample)
         return xi, xj
 
-
+#Contrastive Learning için uygulanan augmentasyon
 class ContrastiveAugmentor:
 
     """Applies augmentation for contrastive learning, as in SimCLR paper"""

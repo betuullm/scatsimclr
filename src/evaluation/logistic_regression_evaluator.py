@@ -68,6 +68,9 @@ class LogisticRegressionEvaluator:
         # train model
         for e in range(epochs):
             for batch_x, batch_y in train_loader:
+                if batch_x is None or batch_y is None:
+                    raise ValueError("batch_x veya batch_y None. Lütfen verilerinizi kontrol edin.")
+
                 batch_x, batch_y = batch_x.to(self._device), batch_y.to(self._device)
 
                 optimizer.zero_grad()
@@ -80,8 +83,7 @@ class LogisticRegressionEvaluator:
         accuracy = self._eval(test_loader)
         return accuracy
 
-    def _standard_dataset(self, train_data: np.ndarray,
-                          test_data: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    def _standard_dataset(self, train_data: np.ndarray,test_data: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         self._scaler.fit(train_data)
         train_data = self._scaler.transform(train_data)
         test_data = self._scaler.transform(test_data)

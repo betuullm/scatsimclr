@@ -1,8 +1,6 @@
 import argparse
 import yaml
-
 from src.trainer import ScatSimCLRTrainer, PretextTaskTrainer
-
 
 def main(args):
 
@@ -20,7 +18,6 @@ def main(args):
         trainer = PretextTaskTrainer(config)
     trainer.train()
 
-
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -28,7 +25,7 @@ if __name__ == '__main__':
                         help='Training mode. `unsupervised` - run training only with contrastive loss, '
                              '`pretext` - run training with contrastive loss and pretext task',
                         choices=['unsupervised', 'pretext'])
-    parser.add_argument('--config', '-c',
-                        help='Path to config file')
+
+    parser.add_argument('--config', '-c',help='Path to config file')
     args = parser.parse_args()
     main(args)

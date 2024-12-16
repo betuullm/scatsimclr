@@ -4,8 +4,9 @@ from torchvision import datasets
 from torch.utils.data import Dataset
 from .cifar_20 import CIFAR20
 from .open_animal_tracks import OpenAnimalTracks
+from .customdataset import CustomDataset
 
-SUPPORTED_DATASETS = ['stl10', 'cifar10', 'cifar20','openanimaltracks']
+SUPPORTED_DATASETS = ['stl10', 'cifar10', 'cifar20','openanimaltracks','customdataset']
 
 IMAGENET_STATS = {
     'mean': [0.485, 0.456, 0.406],
@@ -22,20 +23,26 @@ OPENANIMALTRACKS_STATS = {
     'std':[0.1487, 0.1383, 0.1421]
 }
 
+CUSTOMDATASET_STATS = {
+    'mean': [0.4941, 0.4723, 0.4415],
+    'std':[0.1487, 0.1383, 0.1421]
+}
+
 DATASET_STATS = {
     'cifar10': CIFAR_STATS,
     'cifar20': CIFAR_STATS,
     'stl10': IMAGENET_STATS,
-    'openanimaltracks': OPENANIMALTRACKS_STATS
+    'openanimaltracks': OPENANIMALTRACKS_STATS,
+    'customdataset': CUSTOMDATASET_STATS
 }
 
 NUM_CLASSES = {
     'cifar10': 10,
     'cifar20': 20,
     'stl10': 10,
-    'openanimaltracks': 18
+    'openanimaltracks': 18,
+    'customdataset': 18
 }
-
 
 def get_dataset(dataset: str, train: bool,
                 transform=None,
@@ -45,15 +52,10 @@ def get_dataset(dataset: str, train: bool,
 
     Args:
         dataset: dataset name
-
         train: if True, then train split will be returned
-
         transform: transform to apply to images
-
         download: if True, then dataset will be downloaded, if not downloaded
-
         unlabeled: if True unlabeled split will be returned. Only for STL10
-
     Returns:
         Dataset: dataset
     """
@@ -62,7 +64,6 @@ def get_dataset(dataset: str, train: bool,
         raise ValueError('Unsupported dataset')
 
     if dataset == 'stl10':
-
         if train and unlabeled:
             split = 'train+unlabeled'
         elif train:
@@ -74,9 +75,11 @@ def get_dataset(dataset: str, train: bool,
 
         return datasets.STL10('./data', split=split, download=download, transform=transform)
     
-    elif dataset == 'openanimaltracks':
-        return OpenAnimalTracks('./data/open_animal_tracks', train=train,transform=transform, download=download
-        )
+    elif dataset == 'open_animal_tracks':
+        return OpenAnimalTracks('./data/open_animal_tracks', train=train,transform=transform, download=download)
+     
+    elif dataset == 'customdataset':
+        return CustomDataset('./data/customdataset', train=train,transform=transform, download=download)
     
     elif dataset == 'cifar10':
         return datasets.CIFAR10('./data', train=train, download=download, transform=transform)
