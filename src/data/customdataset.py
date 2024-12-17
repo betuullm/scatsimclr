@@ -20,7 +20,7 @@ class CustomDataset(Dataset):
         """Retrieve all image paths from the root directory."""
         image_extensions = [".jpg", ".jpeg", ".png", ".bmp", ".tiff"]  # Supported formats
         image_paths = []
-        for root, _, files in os.walk(self.root_dir):
+        for root, _, files in os.walk(self.root):
             for file in files:
                 if any(file.lower().endswith(ext) for ext in image_extensions):
                     image_paths.append(os.path.join(root, file))
